@@ -1,38 +1,28 @@
-// required packages
+require('./models')
 require('dotenv').config()
 const express = require('express')
-const path = require('path')
-const { unlinkSync } = require('fs')
-const multer = require('multer')
-const cloudinary = require('cloudinary').v2
 const cors = require('cors')
-// config express app
+
 const app = express()
-const PORT = 8000
+const PORT = process.env.PORT || 3001
 
 // middlewares
 app.use(cors())
-app.use(express.static('uploads'))
+app.use(express.json())
 
-// config for multer
-const uploads = multer({ dest: 'uploads/' })
+const myMiddleWare = (req, res, next) => {
+  console.log(`incoming request: ${req.method} - ${req.url}`)
+  // move along there
+  next()
+}
+
+app.use(myMiddleWare)
 
 app.get('/', (req, res) => {
-  res.json({ msg: 'welcome to the image upload API 👋' })
+  res.json({ msg: 'welcome to the user app 👋' })
 })
 
-app.get('/', (req, res) => {
-  res.json({  msg: 'show all images '})
-})
+// controllers
+app.use('/api-v1/users', require('./controllers/api-v1/users'))
 
-app.post('/images', uploads.single('image'), async (req, res) => {
-  if (!req.file) return res.status.json({ msg: 'no file uploaded! ' })
-  const cloudImageData = await cloudinary.uploader.upload(req.file.path)
-  console.log(cloudImageData)
-  const cloudinaryUrl = `https://res.cloudinary.com/dkchpbore/image/upload/v1593119998/${cloudImageData.public_id}.png`
-  // remove the file after finishing up with it
-  unlinkSync(req.file.path)
-  res.json({ cloudinaryUrl })
-})
-
-app.listen(PORT, () => console.log(`listening to smooth sounds of port ${PORT} in the morning 🌊`))
+app.listen(PORT, () => console.log(`listening to the smooth sounds of port ${PORT} in the morning 🌊`))

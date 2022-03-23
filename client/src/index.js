@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import App from './App';
 import reportWebVitals from './reportWebVitals';
-import ImageUpload from './ImageUpload';
 
 ReactDOM.render(
   <React.StrictMode>
-    <ImageUpload />
+    <App />
   </React.StrictMode>,
   document.getElementById('root')
 );
